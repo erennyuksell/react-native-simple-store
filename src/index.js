@@ -1,10 +1,9 @@
-
 /**
  * @overview A minimalistic wrapper around React Native's AsyncStorage.
  * @license MIT
  */
 import merge from 'lodash.merge';
-import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const deviceStorage = {
 	/**
@@ -12,16 +11,14 @@ const deviceStorage = {
 	 * @param {String|Array} key A key or array of keys
 	 * @return {Promise}
 	 */
-	get(key) {
+	async get(key) {
 		if(!Array.isArray(key)) {
-			return AsyncStorage.getItem(key).then(value => {
-				return JSON.parse(value);
-			});
+			const value = await AsyncStorage.getItem(key);
+			return JSON.parse(value);
 		} else {
-			return AsyncStorage.multiGet(key).then(values => {
-				return values.map(value => {
-					return JSON.parse(value[1]);
-				});
+			const values = await AsyncStorage.multiGet(key);
+			return values.map(value_1 => {
+				return JSON.parse(value_1[1]);
 			});
 		}
 	},
@@ -49,11 +46,10 @@ const deviceStorage = {
 	 * @param  {Value} value The value to update with
 	 * @return {Promise}
 	 */
-	update(key, value) {
-		return deviceStorage.get(key).then(item => {
-			value = typeof value === 'string' ? value : merge({}, item, value);
-			return AsyncStorage.setItem(key, JSON.stringify(value));
-		});
+	async update(key, value) {
+		const item = await deviceStorage.get(key);
+		value = typeof value === 'string' ? value : merge({}, item, value);
+		return AsyncStorage.setItem(key, JSON.stringify(value));
 	},
 
 	/**
@@ -83,17 +79,16 @@ const deviceStorage = {
 	 * @param {Any} value The value to push onto the array
 	 * @return {Promise}
 	 */
-	push(key, value) {
-		return deviceStorage.get(key).then((currentValue) => {
-			if (currentValue === null) {
-				// if there is no current value populate it with the new value
-				return deviceStorage.save(key, [value]);
-			}
-			if (Array.isArray(currentValue)) {
-				return deviceStorage.save(key, [...currentValue, value]);
-			}
-			throw new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`);
-		});
+	async push(key, value) {
+		const currentValue = await deviceStorage.get(key);
+		if (currentValue === null) {
+			// if there is no current value populate it with the new value
+			return deviceStorage.save(key, [value]);
+		}
+		if (Array.isArray(currentValue)) {
+			return deviceStorage.save(key, [...currentValue, value]);
+		}
+		throw new Error(`Existing value for key "${key}" must be of type null or Array, received ${typeof currentValue}.`);
 	},
 };
 
