@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jasonmerino/react-native-simple-store"
+    "url": "https://github.com/erennyuksell/react-native-simple-store"
   },
   "keywords": [
     "React Native",
@@ -39,8 +39,8 @@
     "babel-preset-stage-0": "^6.5.0",
     "jest": "20.0.4",
     "jsdox": "^0.4.10",
-    "react": "^0.14.7",
-    "react-native": "^0.22.0",
-    "@react-native-community/async-storage": "^1.3.3"
+    "react": "17.0.2",
+    "react-native": "^0.68.2",
+    "@react-native-async-storage/async-storage": "^1.17.6"
   }
 }
